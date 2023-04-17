@@ -1,0 +1,18 @@
+# Dans tout ce qui suit, les guillemets ne font pas partie des chaines de characteres. 
+Nom_Prenom="Zacheo_Luca"
+###### CBC
+ID = 65
+IV = b'sRjQLv1OeyunLbF08XXDuQ=='
+ct = b'vA5rlBz+hcow8FWV6HvE8day2J8K9BjTRmfxfw4JxICcZuvrvOsduptvaeEPwqnSk3tytC3FwCUN5JfzxWYpdw=='
+###### CCM Modifié
+m1 = b'Ceci est un test'
+m2 = b'Ceci est un autre test plus long'
+c1 = b'5LYaYovEBW9tUdN9gMzKKg=='
+IV1 = b'AiJxqLkONso='
+tag1 = b'Am9HgWN07270PQ84lX9PrA=='
+c2 = b'rCMvPXw7hsR5VIUnWi7DvF38S7GjFEIeVtd4WSACLp0='
+IV2 = b'vRCHxXsb+jM='
+tag2 = b'JblzYUzrvBG+Q8Zu03HCbw=='
+###### Bruteforce intelligent
+plaintext = b'/JlEx61dBJQvIOfCZTGyHw=='
+ciphertext = b'iy5TSaqXDq62UizAtZfb7w=='
