@@ -56,7 +56,30 @@ def real_oracle(key_id: int, plaintext: bytes, host='iict-mv330-sfa.einet.ad.eiv
         return bytes.fromhex(iv[0]), bytes.fromhex(ct[0])
 
 if __name__ == "__main__":
-    MY_KEY_ID = 44
-    (IV, ct) = real_oracle(MY_KEY_ID, b'Hello World!')
+    MY_KEY_ID = 65
+    (IV, ct) = real_oracle(MY_KEY_ID, b'Je refais un test en faite')
+
+    IV = b'sRjQLv1OeyunLbF08XXDuQ=='
+    ciphertext = b'vA5rlBz+hcow8FWV6HvE8day2J8K9BjTRmfxfw4JxICcZuvrvOsduptvaeEPwqnSk3tytC3FwCUN5JfzxWYpdw=='
+
+    """
     print("IV = %s" % b64encode(IV))
     print("ct = %s" % b64encode(ct))
+    """
+
+    # Known prefix and suffix of the plaintext
+    prefix = b'Le salaire journalier du dirigeant USB est de '
+    suffix = b' CHF'
+
+    # Brute-force the salary value
+    for salary in range(3001):
+        plaintext = prefix + str(salary).encode() + suffix
+        plaintext = pad(plaintext, AES.block_size)
+        _, ciphertext_new = real_oracle(MY_KEY_ID, plaintext)
+        if ciphertext_new == ciphertext:
+            print(f"The salary is: {salary}")
+            break
+
+    #Debut de l'IV fixe = sRjQLv1OeyunLbF08XXD
+    #Clé de 32 bytes donc 256 bits
+    #AES 128 bits donc msg découpé en blocs de 128 bits (16 bytes)
