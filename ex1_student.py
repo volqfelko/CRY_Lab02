@@ -84,23 +84,22 @@ if __name__ == "__main__":
         test = int.from_bytes(IV_courant, 'big') + (salary + 1)
         IV_courant2 = test.to_bytes(16, 'big')
 
-        # construction d'un plain qui XOR l'IV_courant + 1 = le XOR du message intercepté
+        #Construction d'un plain qui XOR l'IV_courant + 1 = le XOR du message intercepté
         forged_plain = strxor(IV_courant2, alpha)
 
-        print(f"salaire : {salary}")
-        print(f"first bits : {b64encode(forged_plain)}")
+        print(f"salaire testé : {salary}")
+        print(f"XOR forgé entrée : {b64encode(forged_plain)}")
 
         plaintext = forged_plain + prefix2 + str(salary).encode() + suffix
-        #plaintext = pad(plaintext, AES.block_size)
         IV, ciphertext_new = real_oracle(MY_KEY_ID, plaintext)
 
-        print(f"XOR forgé: {b64encode(ciphertext_new[:16])}")
+        print(f"XOR forgé sortie : {b64encode(ciphertext_new[:16])}")
 
-        print(f"New: {b64encode(ciphertext_new)}")
-        print(f"Old: {b64encode(ciphertext)}")
+        print(f"Nouveau ct : {b64encode(ciphertext_new)}")
+        print(f"Vieux ct : {b64encode(ciphertext)}")
 
         if ciphertext_new == ciphertext:
-            print(f"The salary is: {salary}")
+            print(f"Le salaire est de : {salary}")
             break
 
     #Clé de 32 bytes donc 256 bits
