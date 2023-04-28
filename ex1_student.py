@@ -58,11 +58,6 @@ def real_oracle(key_id: int, plaintext: bytes, host='iict-mv330-sfa.einet.ad.eiv
 if __name__ == "__main__":
     MY_KEY_ID = 65
 
-    """
-    print("IV = %s" % b64encode(IV))
-    print("ct = %s" % b64encode(ct))
-    """
-
     # Message chiffré intercepté
     ciphertext = b64decode(b'vA5rlBz+hcow8FWV6HvE8day2J8K9BjTRmfxfw4JxICcZuvrvOsduptvaeEPwqnSk3tytC3FwCUN5JfzxWYpdw==')
     # IV correspondant
@@ -81,29 +76,29 @@ if __name__ == "__main__":
     cipher_first_128_bits = ciphertext[:16]
 
     #Récuperation d'IV courant pour connaitre le prochain qui = IV + 1
-    IV_courant, ciphertext_new = real_oracle(MY_KEY_ID, b'Hello World!')
-
-    test = int.from_bytes(IV_courant, 'big') + 1
-    IV_courant2 = test.to_bytes(16, 'big')
-
-    # construction d'un plain qui XOR l'IV_courant + 1 = le XOR du message intercepté
-    forged_plain = strxor(IV_courant2, alpha)
-    print(forged_plain)
-    print(b64encode(strxor(forged_plain, IV_courant2)))
+    IV_courant, _ = real_oracle(MY_KEY_ID, b'Hello World!')
 
     # Brute-force the salary value
     for salary in range(3001):
-        m_first_128_int = int.from_bytes(forged_plain, 'big') - salary
-        m_first_128_bits_new = m_first_128_int.to_bytes(16, 'big')
-        print(f"salaire : {salary}")
-        print(f"first bits : {b64encode(m_first_128_bits_new)}")
 
-        plaintext = m_first_128_bits_new + prefix2 + str(salary).encode() + suffix
-        plaintext = pad(plaintext, AES.block_size)
+        test = int.from_bytes(IV_courant, 'big') + (salary + 1)
+        IV_courant2 = test.to_bytes(16, 'big')
+
+        # construction d'un plain qui XOR l'IV_courant + 1 = le XOR du message intercepté
+        forged_plain = strxor(IV_courant2, alpha)
+
+        print(f"salaire : {salary}")
+        print(f"first bits : {b64encode(forged_plain)}")
+
+        plaintext = forged_plain + prefix2 + str(salary).encode() + suffix
+        #plaintext = pad(plaintext, AES.block_size)
         IV, ciphertext_new = real_oracle(MY_KEY_ID, plaintext)
-        
-        print(plaintext)
+
         print(f"XOR forgé: {b64encode(ciphertext_new[:16])}")
+
+        print(f"New: {b64encode(ciphertext_new)}")
+        print(f"Old: {b64encode(ciphertext)}")
+
         if ciphertext_new == ciphertext:
             print(f"The salary is: {salary}")
             break
