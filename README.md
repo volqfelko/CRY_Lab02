@@ -25,7 +25,7 @@ connaitre le salaire.<br/><br/>
 
    **Réponse : Le problème est qu'un IV prévisible revient au même qu'un IV fixe, il faut donc le rendre aléatoire**
    **et donc imprévisible entre chaque requêtes.**
-   ![CBC salaire](/imgs/IncrementRandom.png "CBC salaire")
+   ![CBC salaire](/imgs/IncrementRandom.png "CBC salaire")<br/>
  **Une incrémentation aléatoire comme cela devrait faire l'affaire**<br/><br/>
 
 4. Est-ce que cette attaque s’applique aussi à AES-CTR ? Justifiez.<br/><br/>
