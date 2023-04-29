@@ -8,7 +8,7 @@ if __name__ == "__main__":
     plaintext = b64decode(b'/JlEx61dBJQvIOfCZTGyHw==')
     ciphertext = b64decode(b'iy5TSaqXDq62UizAtZfb7w==')
 
-    #Meet-in-the-Middle attack
+    #Meet-in-the-Middle
     possible_outputs = {}
     for i in range(2 ** 16):
         key1 = i.to_bytes(2, byteorder='big') + (30 * b"\x00")
