@@ -56,15 +56,15 @@ Si c'est le cas, nous avons donc trouvé la paire de clés permettant le déchif
 **2. Décrivez votre algorithme. Quelle est la complexité pire-cas de votre attaque ? Comment se
 compare-t-elle à un bruteforce des deux clefs ?**<br/>
 
-J'ai décrit mon implémentation dans la question ci-dessus.<br/>
+Réponse : J'ai décrit mon implémentation dans la question ci-dessus.<br/>
 La complexité de l'algorithme dans le pire des cas est de **O(2^32)** car dans le pire cas il faudra parcourir l'entièreté
 des 2^16 clés dans chacune des boucles afin de trouver les bonnes.<br/>
 Ce qui donne : **O(2^16)*O(2^16) = O(2^32)***<br/><br/>
 La pire complexité d'un bruteforce classique resterait la même que celle de "meet-in-the-middle".
 Mais l'avantage de cette technique est le fait de stocker uniquement les résultats intermédiaires et pas toutes les paires 
-de clés testées.<br/>
+de clés testées.<br/><br/>
 **3. Qu’est-ce que votre attaque implique sur la complexité du bruteforce sur 3-key 3DES ?**<br/>
-Cette attaque montre que la complexité du brute force sur 3-key 3DES n'est pas aussi élevée qu'on pourrait le penser. <br/>
+Réponse : Cette attaque montre que la complexité du brute force sur 3-key 3DES n'est pas aussi élevée qu'on pourrait le penser. <br/>
 En effet, il était supposé que la complexité du brute force sur 3-key 3DES était de 2^112, vu qu'il y a 3 clés de 56 bits chacune,
 mais cette attaque permet de réduire cette complexité à 2^56.
 
