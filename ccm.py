@@ -33,16 +33,36 @@ def ccm(message: bytes, key: bytes) -> tuple:
     return (cipher.nonce, ciphertext, tag)
 
 
+def ccm_decrypt(nonce: bytes, ciphertext: bytes, tag: bytes, key: bytes) -> bytes:
+    """Decrypts AES128-CCM ciphertext with tag verification"""
+
+    if len(key) != 16:
+        raise Exception("Only AES-128 is supported")
+
+    cipher = AES.new(key, mode=AES.MODE_CTR, nonce=nonce)
+    plaintext = cipher.decrypt(ciphertext)
+
+    cipher = AES.new(key, mode=AES.MODE_CTR, nonce=nonce)
+    decrypted_tag = cipher.decrypt(tag)
+
+    if decrypted_tag != cbcmac(plaintext, key):
+        raise Exception("Error. Tag verification failed")
+
+    return plaintext
+
+
 if __name__ == "__main__":
     ra = Random.new()
     key = ra.read(16)
 
     m1 = b"Ceci est un test"
     m2 = b"Ceci est un test mais plus long "
-    print(len(m1))
+
     (IV1, c1, tag1) = ccm(m1, key)
     (IV2, c2, tag2) = ccm(m2, key)
-    print(b64encode(tag1))
+
+    decrypted_message = ccm_decrypt(IV1, c1, tag1, key)
+    print(decrypted_message)
 
     #Récuperation du tag1 original déchiffré
     keystream = strxor.strxor(m1, c1)
