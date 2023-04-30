@@ -43,6 +43,7 @@ if __name__ == "__main__":
     (IV1, c1, tag1) = ccm(m1, key)
     (IV2, c2, tag2) = ccm(m2, key)
     print(b64encode(tag1))
+
     #Récuperation du tag1 original déchiffré
     keystream = strxor.strxor(m1, c1)
     original_tag = strxor.strxor(tag1, keystream)

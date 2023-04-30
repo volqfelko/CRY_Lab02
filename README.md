@@ -33,10 +33,48 @@ connaitre le salaire.<br/><br/>**
   pour donner le cipher.
 
 ## 2 CCM modifié (2 pts)
-1. Plusieurs éléments sont modifiés par rapport à CCM. Lesquels ?
-2. Vous avez intercepté deux textes clairs (m1 et m2) de test ainsi que les textes chiffrés, IVs, et
+**1. Plusieurs éléments sont modifiés par rapport à CCM. Lesquels ?**
+
+Réponse : Le tag est chiffré, ce qui n'est pas forcément fait de base dans CCM. <br/>
+La clé est la même pour chiffré le tag et le message. <br/>
+Le même nonce est utilisé pour le chiffrement du tag ainsi que le chiffrement du message ce qui pose problème
+au niveau du CTR.<br/>
+Il n'y a pas "d'authenticated data" pour la création du tag.
+
+**2. Vous avez intercepté deux textes clairs (m1 et m2) de test ainsi que les textes chiffrés, IVs, et
 tags correspondants. Utilisez ces informations pour casser la construction. Utilisez vos paramètres
-pour implémenter votre attaque et donnez le résulta
+pour implémenter votre attaque et donnez le résultat**
+
+Réponse : Pour casser la construction il faut dans un premier temps remarquer que le tag est chiffré avec
+le même nonce que le premier bloc du message que nous souhaitons chiffrer.<br/>
+En effet, on peut voir que le **CTR == 0** pour les 2 opérations étant donné il est réinitialisé au moment
+de la création de la nouvelle variable "cipher" qui va permettre de chiffré le tag.
+
+En constatant cette erreur d'implémentation, on peut donc récuperer le tag déchiffrer du message intercepté.<br/>
+Comme cela : <br/> 
+- Récuperation du keystream = message1 XOR cipher
+- Récuperation du tag déchiffré = tagChiffré XOR keystream 
+
+Cette opération fonctionne car on a la même valeur (IV ¦¦ CTR = 0) qui est utilisée pour chiffrer le tag ainsi que le message
+étant donné que le CTR = 0 dans les 2 cas.
+
+![img.png](/imgs/Schema_Ctr0.png)
+(J'ai fait un schéma pour m'aider à comprendre)
+
+En ayant le tag déchiffré, non pouvons donc nous attaquer à CBC-MAC (comme vu en classe) et casser l'integrité des 
+messages si on intercepte un message et son tag correspondant.<br/>
+
+![img.png](img.png)
+
+Le schéma ci-dessus illustre parfaitement l'attaque, pour forger un message ayant un tag valide il ne reste donc qu'a
+faire : forged_message = message || (message XOR tagDechiffré)<br/>
+Ce message aura donc le même tag (donc valide) que le message initial intercepté alors que ce n'est pas un message légitime.<br/>
+L'integrité est donc cassée !
+
+**4. Corrigez l’implémentation et faites en sorte que le chiffrement CCM soit correct !**
+
+Réponse : Pour corriger l'implémentation il suffit de ne pas réinitialiser le ctr et donc ne pas utiliser le même nonce.<br/>
+On peut le faire simplement comme cela : ` cipher = AES.new(key, mode = AES.MODE_CTR, nonce = Random.new().read(8))`
 
 ## 3 Bruteforce intelligent (1.5 pts)
 **1. Vous trouverez dans votre fichier de paramètres un texte clair (plaintext) et un texte chiffré
