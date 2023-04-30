@@ -1,20 +1,22 @@
 from Crypto.Cipher import AES
 from Crypto.Util import Counter, strxor
 from Crypto import Random
-from base64 import b64encode, b64decode
+from base64 import b64encode
+
 
 def cbcmac(message: bytes, key: bytes) -> bytes:
-    if len(key) !=  16:
+    if len(key) != 16:
         raise Exception("Error. Need key of 128 bits")
     if len(message) % 16 != 0:
         raise Exception("Error. Message needs to be a multiple of 128 bits")
-    cipher = AES.new(key,AES.MODE_ECB)
+    cipher = AES.new(key, AES.MODE_ECB)
     temp = b"\x00"*16
-    blocks = [message[i:i+16] for i in range(0,len(message),16)]
+    blocks = [message[i:i+16] for i in range(0, len(message), 16)]
     for b in blocks:
-        temp = strxor.strxor(temp,b)
+        temp = strxor.strxor(temp, b)
         temp = cipher.encrypt(temp)
     return temp
+
 
 def ccm(message: bytes, key: bytes) -> tuple:
     """Encrypts with AES128-CCM without authenticated data. """
@@ -31,17 +33,16 @@ def ccm(message: bytes, key: bytes) -> tuple:
     return (cipher.nonce, ciphertext, tag)
 
 
-
 if __name__ == "__main__":
     ra = Random.new()
     key = ra.read(16)
 
     m1 = b"Ceci est un test"
-    m2 = b"Mais oui bien su"
-    print(len(m2))
+    m2 = b"Ceci est un test mais plus long "
+    print(len(m1))
     (IV1, c1, tag1) = ccm(m1, key)
     (IV2, c2, tag2) = ccm(m2, key)
-
+    print(b64encode(tag1))
     #Récuperation du tag1 original déchiffré
     keystream = strxor.strxor(m1, c1)
     original_tag = strxor.strxor(tag1, keystream)
@@ -54,7 +55,15 @@ if __name__ == "__main__":
         print("TAG calculé == TAG original !! ")
         print("TAG calculé = " + str(b64encode(original_tag)) + " ¦¦ TAG original = " + str(b64encode(original_tag_decrypted)))
 
+    new_msg = strxor.strxor(m1, original_tag)
+    print(new_msg)
+    new_msg2 = m1 + new_msg
+    print(new_msg2)
+    tag = cbcmac(new_msg2, key)
+    print(b64encode(tag))
+    #Tag valide créer pour nouveau message sans connaitre clé
 
+    """
     #Calcul Keystream entre MAC et message1
     m3 = b"ahgs dssdashf sd"
     (IV3, c3, tag3) = ccm(m3, key)
@@ -74,4 +83,4 @@ if __name__ == "__main__":
 
     #New Tag4
     tag4 = strxor)
-
+    """
