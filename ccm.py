@@ -56,32 +56,11 @@ if __name__ == "__main__":
         print("TAG calculé == TAG original !! ")
         print("TAG calculé = " + str(b64encode(original_tag)) + " ¦¦ TAG original = " + str(b64encode(original_tag_decrypted)))
 
-    new_msg = strxor.strxor(m1, original_tag)
-    print(new_msg)
-    new_msg2 = m1 + new_msg
-    print(new_msg2)
-    tag = cbcmac(new_msg2, key)
-    print(b64encode(tag))
-    #Tag valide créer pour nouveau message sans connaitre clé
+    message_forged = m1 + strxor.strxor(m1, original_tag)
+    tag_forged = cbcmac(message_forged, key)
 
-    """
-    #Calcul Keystream entre MAC et message1
-    m3 = b"ahgs dssdashf sd"
-    (IV3, c3, tag3) = ccm(m3, key)
+    if original_tag == tag_forged:
+        print("\nTAG forgé == TAG original !! ")
+        print("TAG forgé = " + str(b64encode(tag_forged)) + " ¦¦ TAG original = " + str(b64encode(original_tag)))
+        print("Message forgé = " + str(message_forged) + " ¦¦ Message original = " + str(m1))
 
-    # Récuperation du tag3 original déchiffré
-    keystream = strxor.strxor(m3, c3)
-    original_tag3 = strxor.strxor(tag3, keystream)
-
-    intermediate = strxor.strxor(original_tag, original_tag3)
-
-    #Calcul XOR m1 m2
-    intermediate_msg = strxor.strxor(m1, m2)
-
-    #Message forgé
-    inter = strxor.strxor(intermediate_msg, intermediate)
-    forged_m4 = strxor.strxor(inter, m1)
-
-    #New Tag4
-    tag4 = strxor)
-    """

@@ -47,7 +47,7 @@ pour implémenter votre attaque et donnez le résultat**
 
 Réponse : Pour casser la construction il faut dans un premier temps remarquer que le tag est chiffré avec
 le même nonce que le premier bloc du message que nous souhaitons chiffrer.<br/>
-En effet, on peut voir que le **CTR == 0** pour les 2 opérations étant donné il est réinitialisé au moment
+En effet, on peut voir que le **CTR == 0** pour les 2 opérations étant donné qu'il est réinitialisé au moment
 de la création de la nouvelle variable "cipher" qui va permettre de chiffré le tag.
 
 En constatant cette erreur d'implémentation, on peut donc récuperer le tag déchiffrer du message intercepté.<br/>
@@ -55,7 +55,7 @@ Comme cela : <br/>
 - Récuperation du keystream = message1 XOR cipher
 - Récuperation du tag déchiffré = tagChiffré XOR keystream 
 
-Cette opération fonctionne car on a la même valeur (IV ¦¦ CTR = 0) qui est utilisée pour chiffrer le tag ainsi que le message
+Cette opération fonctionne car on a la même valeur (IV || CTR = 0) qui est utilisée pour chiffrer le tag ainsi que le message
 étant donné que le CTR = 0 dans les 2 cas.
 
 ![img.png](/imgs/Schema_Ctr0.png)
