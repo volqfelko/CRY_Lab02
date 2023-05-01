@@ -10,7 +10,7 @@ dans votre fichier de paramètres). Récupérez le salaire ! Expliquez votre att
 paramètre ID dans votre fichier de paramètres est l’identifiant du dirigeant dont vous souhaitez
 connaitre le salaire.<br/><br/>**
 
-   Réponse : Etant donnée que l'IV est uniquement incrementé de 1 entre chaque requêtes de chiffrement envoyée à l'oracle,
+   Réponse : Etant donné que l'IV est uniquement incrementé de 1 entre chaque requêtes de chiffrement envoyée à l'oracle,
    on peut simplement lui envoyer une demande de chiffrement pour récuperer l'IV actuel et ainsi "forgé" des messages
    qui auront comme 128 premiers bits la même entrée que celle du message intercepté.<br/><br/>
    En effet, on sait que : IV XOR 128 premiers bits du plain = b'/X3wXZwiGkLVSJEengCx1w=='<br/><br/>
@@ -24,12 +24,12 @@ connaitre le salaire.<br/><br/>**
 **3. Comment pouvez-vous corriger le problème ? Proposez un code n’ayant pas cette vulnérabilité.<br/><br/>**
 
    Réponse : Le problème est qu'un IV prévisible revient au même qu'un IV fixe, il faut donc le rendre aléatoire
-   et donc imprévisible entre chaque requêtes.
+   et donc imprévisible entre chaque requêtes.<br/>
    ![CBC salaire](/imgs/IncrementRandom.png "CBC salaire")<br/>
    Une incrémentation aléatoire comme cela devrait faire l'affaire<br/><br/>
 
 **4. Est-ce que cette attaque s’applique aussi à AES-CTR ? Justifiez.<br/><br/>**
-  Réponse : Non car dans CTR l'IV et le counter sont chiffré et seulement ensuite le plain est XOR avec ce résultat
+  Réponse : Non car dans CTR l'IV et le counter sont chiffrés, et seulement ensuite, le plain est XOR avec ce résultat
   pour donner le cipher.
 
 ## 2 CCM modifié (2 pts)
@@ -48,23 +48,23 @@ pour implémenter votre attaque et donnez le résultat**
 Réponse : Pour casser la construction il faut dans un premier temps remarquer que le tag est chiffré avec
 le même nonce que le premier bloc du message que nous souhaitons chiffrer.<br/>
 En effet, on peut voir que le **CTR == 0** pour les 2 opérations étant donné qu'il est réinitialisé au moment
-de la création de la nouvelle variable "cipher" qui va permettre de chiffré le tag.
+de la création de la nouvelle variable "cipher" qui va permettre de chiffrer le tag.
 
-En constatant cette erreur d'implémentation, on peut donc récuperer le tag déchiffrer du message intercepté.<br/>
+En constatant cette erreur d'implémentation, on peut donc récuperer le tag déchiffré du message intercepté.<br/>
 Comme cela : <br/> 
 - Récuperation du keystream = message1 XOR cipher
 - Récuperation du tag déchiffré = tagChiffré XOR keystream 
 
 Cette opération fonctionne car on a la même valeur (IV || CTR = 0) qui est utilisée pour chiffrer le tag ainsi que le message
-étant donné que le CTR = 0 dans les 2 cas.
+étant donné que le CTR = 0 dans les 2 cas.<br/>
 
-![img.png](/imgs/Schema_Ctr0.png)
+![img.png](/imgs/Schema_Ctr0.png)<br/>
 (J'ai fait un schéma pour m'aider à comprendre)
 
 En ayant le tag déchiffré, non pouvons donc nous attaquer à CBC-MAC (comme vu en classe) et casser l'integrité des 
 messages si on intercepte un message et son tag correspondant.<br/>
 
-![img.png](img.png)
+![img.png](/imgs/CBC-MAC-Attack.png)
 
 Le schéma ci-dessus illustre parfaitement l'attaque, pour forger un message ayant un tag valide il ne reste donc qu'a
 faire : forged_message = message || (message XOR tagDechiffré)<br/>
